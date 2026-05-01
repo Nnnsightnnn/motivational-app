@@ -521,6 +521,156 @@
       font-variation-settings: "opsz" 144;
     }
 
+    /* ── Guide FAB (sketchy "?") ──────────────────────────────── */
+    .fab {
+      position: fixed;
+      right: 18px;
+      bottom: calc(env(safe-area-inset-bottom) + 86px);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-elev);
+      color: var(--accent);
+      border: 0.5px solid var(--hairline);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      z-index: 15;
+      transition: opacity 0.28s ease, transform 0.18s ease, box-shadow 0.28s ease;
+    }
+    .fab:active { transform: scale(0.94); }
+    .fab[hidden] { display: none; }
+    .fab-glyph {
+      display: inline-flex;
+      transform-origin: 50% 60%;
+    }
+    .fab.pulse { box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 0 var(--glow); animation: fabHalo 1.8s ease-out infinite; }
+    .fab.pulse .fab-glyph { animation: fabGiggle 1.4s ease-in-out infinite; }
+    @keyframes fabGiggle {
+      0%, 100% { transform: rotate(-5deg); }
+      20%      { transform: rotate(6deg) translateY(-1px); }
+      45%      { transform: rotate(-3deg); }
+      70%      { transform: rotate(5deg) translateY(1px); }
+    }
+    @keyframes fabHalo {
+      0%   { box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 0 var(--glow); }
+      70%  { box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 14px rgba(0,0,0,0); }
+      100% { box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 0 0 0 rgba(0,0,0,0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fab.pulse, .fab.pulse .fab-glyph { animation: none; }
+    }
+
+    /* ── Onboarding overlay (spotlight + tooltip) ─────────────── */
+    .onboarding {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+    }
+    .onboarding.active { opacity: 1; pointer-events: auto; }
+    .onboarding-scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+    }
+    @media (prefers-color-scheme: light) {
+      .onboarding-scrim { background: rgba(15, 20, 17, 0.45); }
+    }
+    .onboarding-spotlight {
+      position: absolute;
+      border-radius: 14px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55), 0 0 0 2px var(--accent) inset;
+      transition: top 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  left 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  height 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      pointer-events: none;
+    }
+    @media (prefers-color-scheme: light) {
+      .onboarding-spotlight { box-shadow: 0 0 0 9999px rgba(15,20,17,0.45), 0 0 0 2px var(--accent) inset; }
+    }
+    .onboarding-spotlight.center {
+      top: 50%; left: 50%; width: 0; height: 0;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
+    }
+    @media (prefers-color-scheme: light) {
+      .onboarding-spotlight.center { box-shadow: 0 0 0 9999px rgba(15,20,17,0.55); }
+    }
+    .onboarding-tip {
+      position: absolute;
+      max-width: 320px;
+      width: calc(100% - 44px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elev);
+      color: var(--ink);
+      border: 0.5px solid var(--hairline);
+      border-radius: var(--radius-card);
+      padding: 16px 18px 14px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+      font-family: var(--font-body);
+      transition: top 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .onboarding-tip-step {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .onboarding-tip-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -0.012em;
+      line-height: 1.25;
+      margin: 0 0 8px;
+      font-variation-settings: "opsz" 144;
+    }
+    .onboarding-tip-body {
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--ink-dim);
+      margin: 0 0 14px;
+    }
+    .onboarding-tip-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .onboarding-tip-skip {
+      background: transparent;
+      border: none;
+      color: var(--ink-faint);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 10px;
+      cursor: pointer;
+      margin-right: auto;
+    }
+    .onboarding-tip-next {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border: none;
+      border-radius: var(--radius-button);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 18px;
+      min-height: 40px;
+      cursor: pointer;
+    }
+    .onboarding-tip-next:active { transform: scale(0.98); }
+
   </style>
 </head>
 <body data-weather="grove">
@@ -550,6 +700,11 @@
       </symbol>
       <symbol id="i-x" viewBox="0 0 22 22">
         <path d="M6 6l10 10M16 6L6 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-help" viewBox="0 0 22 22">
+        <path d="M6.4 8.1 Q5.7 3.7 11.1 3.9 Q16.4 3.6 16.1 8.6 Q15.9 11.2 11.5 12 Q10.6 12.3 11 14.6"
+              fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="10.95" cy="17.5" r="1.05" fill="currentColor"/>
       </symbol>
     </defs>
   </svg>
@@ -643,6 +798,26 @@
     <button class="cta" id="showMeBtn">Show me something</button>
   </div>
 
+  <button class="fab" id="guideFab" aria-label="Show guide">
+    <span class="fab-glyph">
+      <svg width="22" height="22" aria-hidden="true"><use href="#i-help"/></svg>
+    </span>
+  </button>
+
+  <div class="onboarding" id="onboarding" aria-hidden="true" role="dialog" aria-label="Steady guide">
+    <div class="onboarding-scrim" id="onboardingScrim"></div>
+    <div class="onboarding-spotlight center" id="onboardingSpotlight"></div>
+    <div class="onboarding-tip" id="onboardingTip">
+      <div class="onboarding-tip-step" id="onboardingStepLabel"></div>
+      <h2 class="onboarding-tip-title" id="onboardingTitle"></h2>
+      <p class="onboarding-tip-body" id="onboardingBody"></p>
+      <div class="onboarding-tip-actions">
+        <button class="onboarding-tip-skip" id="onboardingSkip" type="button">Skip</button>
+        <button class="onboarding-tip-next" id="onboardingNext" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -693,6 +868,7 @@
       feedback: "steady.feedback",
       content: "steady.content",
       lastShown: "steady.lastShown",
+      seenOnboarding: "steady.seenOnboarding",
     };
 
     const state = {
@@ -1007,6 +1183,7 @@
       document.getElementById("contentView").classList.add("active");
       document.getElementById("stickyCta").style.display = "none";
       document.getElementById("tabs").style.display = "none";
+      setFabVisible(false);
       window.scrollTo(0, 0);
     }
 
@@ -1018,6 +1195,7 @@
       const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
       document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
       setActiveTab("dashboard");
+      setFabVisible(true);
       setBackground({ video: true });
     }
 
@@ -1047,6 +1225,7 @@
       document.getElementById("historyView").classList.add("active");
       document.getElementById("stickyCta").style.display = "none";
       setActiveTab("history");
+      setFabVisible(true);
     }
 
     function setActiveTab(view) {
@@ -1075,6 +1254,165 @@
       const dates = new Set(checkIns.map(c => new Date(c.created_at).toDateString()));
       count.textContent = dates.size;
       wrap.hidden = false;
+    }
+
+    // ----------- Guide FAB + onboarding tour -----------
+    const TOUR_STEPS = [
+      {
+        target: null,
+        title: "Hi. I'm Steady.",
+        body: "A 30-second check-in, then I'll find a quote or exercise that fits where you are. Want a quick tour?",
+        nextLabel: "Show me",
+      },
+      {
+        target: "#moodChips",
+        title: "Start with mood.",
+        body: "Tap whatever feels true right now. Pick one, pick a few — there's no wrong answer.",
+      },
+      {
+        target: "#energyToggle",
+        title: "Then your energy.",
+        body: "Low, mid, or high. This shapes whether I lean toward a calm read or something more activating.",
+      },
+      {
+        target: "#needChips",
+        title: "What would help?",
+        body: "Pick the kind of nudge you need. These map to the five rings — earth, water, fire, wind, void.",
+      },
+      {
+        target: "#showMeBtn",
+        title: "Then tap this.",
+        body: "I'll pick something that fits. If it doesn't land, tell me — I'll learn.",
+        nextLabel: "Got it",
+      },
+    ];
+
+    function setFabVisible(visible) {
+      const fab = document.getElementById("guideFab");
+      if (!fab) return;
+      fab.hidden = !visible;
+    }
+
+    function isFirstRun() {
+      const seen = load(STORE_KEYS.seenOnboarding, false);
+      const checkIns = load(STORE_KEYS.checkIns, []) || [];
+      return !seen && checkIns.length === 0;
+    }
+
+    function markOnboardingSeen() {
+      save(STORE_KEYS.seenOnboarding, true);
+      const fab = document.getElementById("guideFab");
+      if (fab) fab.classList.remove("pulse");
+    }
+
+    const tour = {
+      idx: 0,
+      active: false,
+      onResize: null,
+    };
+
+    function startTour() {
+      // Tour assumes the dashboard is visible — bring user back if they're elsewhere.
+      const onContent = document.getElementById("contentView").classList.contains("active");
+      const onHistory = document.getElementById("historyView").classList.contains("active");
+      if (onContent || onHistory) showDashboard();
+
+      tour.idx = 0;
+      tour.active = true;
+      document.getElementById("onboarding").classList.add("active");
+      document.getElementById("onboarding").setAttribute("aria-hidden", "false");
+      const fab = document.getElementById("guideFab");
+      if (fab) fab.classList.remove("pulse");
+      tour.onResize = () => renderTourStep();
+      window.addEventListener("resize", tour.onResize);
+      window.addEventListener("scroll", tour.onResize, { passive: true });
+      renderTourStep();
+    }
+
+    function endTour({ completed }) {
+      tour.active = false;
+      document.getElementById("onboarding").classList.remove("active");
+      document.getElementById("onboarding").setAttribute("aria-hidden", "true");
+      if (tour.onResize) {
+        window.removeEventListener("resize", tour.onResize);
+        window.removeEventListener("scroll", tour.onResize);
+        tour.onResize = null;
+      }
+      // Reset spotlight to center for next open
+      const spot = document.getElementById("onboardingSpotlight");
+      spot.classList.add("center");
+      spot.style.cssText = "";
+      if (completed) markOnboardingSeen(); else save(STORE_KEYS.seenOnboarding, true);
+      const fab = document.getElementById("guideFab");
+      if (fab) fab.classList.remove("pulse");
+    }
+
+    function renderTourStep() {
+      const step = TOUR_STEPS[tour.idx];
+      if (!step) { endTour({ completed: true }); return; }
+
+      const tip = document.getElementById("onboardingTip");
+      const spot = document.getElementById("onboardingSpotlight");
+      document.getElementById("onboardingStepLabel").textContent =
+        `Step ${tour.idx + 1} of ${TOUR_STEPS.length}`;
+      document.getElementById("onboardingTitle").textContent = step.title;
+      document.getElementById("onboardingBody").textContent = step.body;
+      const nextBtn = document.getElementById("onboardingNext");
+      nextBtn.textContent = step.nextLabel
+        || (tour.idx === TOUR_STEPS.length - 1 ? "Done" : "Next");
+
+      const target = step.target ? document.querySelector(step.target) : null;
+
+      if (!target) {
+        spot.classList.add("center");
+        spot.style.top = ""; spot.style.left = "";
+        spot.style.width = ""; spot.style.height = "";
+        // Center the tip vertically
+        const vh = window.innerHeight;
+        const tipH = tip.offsetHeight || 180;
+        tip.style.top = `${Math.max(20, (vh - tipH) / 2)}px`;
+        return;
+      }
+
+      target.scrollIntoView({ block: "center", behavior: "smooth" });
+      // Wait one frame for layout to settle after scroll
+      requestAnimationFrame(() => {
+        const rect = target.getBoundingClientRect();
+        const pad = 8;
+        const top = Math.max(8, rect.top - pad);
+        const left = Math.max(8, rect.left - pad);
+        const width = rect.width + pad * 2;
+        const height = rect.height + pad * 2;
+        spot.classList.remove("center");
+        spot.style.top = `${top}px`;
+        spot.style.left = `${left}px`;
+        spot.style.width = `${width}px`;
+        spot.style.height = `${height}px`;
+
+        // Place tip above or below the spotlight, whichever has more room
+        const vh = window.innerHeight;
+        const spaceBelow = vh - (top + height);
+        const spaceAbove = top;
+        const tipH = tip.offsetHeight || 180;
+        const gap = 14;
+        let tipTop;
+        if (spaceBelow >= tipH + gap + 20 || spaceBelow >= spaceAbove) {
+          tipTop = top + height + gap;
+        } else {
+          tipTop = Math.max(20, top - tipH - gap);
+        }
+        tip.style.top = `${tipTop}px`;
+      });
+    }
+
+    function advanceTour() {
+      tour.idx += 1;
+      if (tour.idx >= TOUR_STEPS.length) {
+        endTour({ completed: true });
+        toast("You're set");
+      } else {
+        renderTourStep();
+      }
     }
 
     // ----------- Event wiring -----------
@@ -1152,6 +1490,22 @@
           else showHistory();
         });
       });
+
+      // Guide FAB — pulse on first run, opens tour on tap.
+      const fab = document.getElementById("guideFab");
+      if (fab) {
+        if (isFirstRun()) fab.classList.add("pulse");
+        fab.addEventListener("click", startTour);
+      }
+      document.getElementById("onboardingNext").addEventListener("click", advanceTour);
+      document.getElementById("onboardingSkip").addEventListener("click",
+        () => endTour({ completed: false }));
+      document.getElementById("onboardingScrim").addEventListener("click",
+        () => endTour({ completed: false }));
+
+      // Auto-launch the tour for brand-new users so they're not stranded
+      // staring at chips. Delay one frame so layout has settled.
+      if (isFirstRun()) requestAnimationFrame(startTour);
 
       // Register service worker for PWA
       if ("serviceWorker" in navigator) {
