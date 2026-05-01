@@ -14,6 +14,11 @@ dist/
 .next/
 out/
 
+.claude
+CLAUDE.md
+
+/research/
+
 # Editor
 .vscode/
 .idea/
@@ -25,8 +30,30 @@ out/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# TypeScript / test artifacts
+*.tsbuildinfo
+coverage/
 
 # Env / secrets
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+
+# Media / large exploratory assets — img/ and video/ are duplicates of art/ (byte-identical)
+frontend/img/
+frontend/video/
+
+# --- ClaudeKit ---
+.claude/pain-points/ai-error-history.json
+.claude/skills/*/SKILL.md.bak-*
+.claude/skills/*/evals/runs/
+.claude/skills/*/evals/candidates/
+.claude/worktrees/
+.claude/settings.local.json
+# --- /ClaudeKit ---
+

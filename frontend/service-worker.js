@@ -2,13 +2,13 @@
 // Cache-first for the app shell so it works offline on the phone.
 // Bump CACHE_VERSION whenever you change the shell.
 
-const CACHE_VERSION = "steady-v1";
+const CACHE_VERSION = "steady-v8";
 const SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icon.svg",
-  "../content/seed.json",
+  "./content/seed.json",
 ];
 
 self.addEventListener("install", (event) => {

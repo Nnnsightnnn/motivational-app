@@ -6,6 +6,18 @@
 import type { CheckIn, ContentItem } from "./db";
 import { rowToContentItem } from "./db";
 
+// Five Rings lens: each `need` chip maps to one of Musashi's five books.
+// The derived ring is added to the user's tag set so ring-aligned content
+// (tagged with the same ring) gets a +1 overlap bonus in scoring.
+export const NEED_TO_RING: Record<string, string> = {
+  grounding: "earth",
+  calming: "water",
+  focusing: "fire",
+  energizing: "fire",
+  perspective: "wind",
+  "self-compassion": "void",
+};
+
 export function inferContextTags(timestamp: number = Date.now()): string[] {
   const h = new Date(timestamp).getHours();
   const tags: string[] = [];
@@ -17,7 +29,11 @@ export function inferContextTags(timestamp: number = Date.now()): string[] {
 export function checkInToTags(ci: CheckIn): string[] {
   const tags = new Set<string>();
   (ci.state.mood ?? []).forEach((t) => tags.add(t));
-  (ci.state.need ?? []).forEach((t) => tags.add(t));
+  (ci.state.need ?? []).forEach((t) => {
+    tags.add(t);
+    const ring = NEED_TO_RING[t];
+    if (ring) tags.add(ring);
+  });
   (ci.context?.inferred_tags ?? []).forEach((t) => tags.add(t));
   return [...tags];
 }

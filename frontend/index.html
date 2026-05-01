@@ -5,39 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#0d1117" />
+  <meta name="theme-color" content="#0F1411" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
   <title>Steady</title>
   <style>
+    /* ── Steady tokens · mood-dynamic ─────────────────────────── */
     :root {
-      --bg: #0d1117;
-      --bg-elev: #161b22;
-      --bg-elev-2: #1f262d;
-      --fg: #e6edf3;
-      --fg-dim: #8b96a3;
-      --fg-faint: #4a5560;
-      --accent: #7ec3a7;
-      --accent-dim: #3d5e51;
-      --warm: #d9a86c;
-      --danger: #c97070;
-      --border: #2a313a;
-      --radius: 14px;
+      --radius-card: 4px;
+      --radius-button: 4px;
+      --radius-chip: 999px;
       --tap: 48px;
+      --font-display: "Fraunces", "Source Serif 4", Georgia, serif;
+      --font-body: "Inter Tight", "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+      /* Default — Grove light */
+      --bg: #F4F0E6;
+      --bg-elev: #FFFFFF;
+      --bg-soft: #E6E0CF;
+      --ink: #1F2820;
+      --ink-dim: #5A6B5C;
+      --ink-faint: #A4B0A6;
+      --hairline: rgba(31,40,32,0.08);
+      --accent: #4A6B52;
+      --accent-ink: #FBF8EE;
+      --accent-soft: #D4DDC8;
+      --glow: rgba(74,107,82,0.18);
+    }
+    [data-weather="dawn"] {
+      --bg: #FBF1E8; --bg-elev: #FFFFFF; --bg-soft: #F4E2D2;
+      --ink: #2A1F19; --ink-dim: #6E5A4D; --ink-faint: #B49E8E;
+      --hairline: rgba(42,31,25,0.08);
+      --accent: #E07856; --accent-ink: #FFFFFF; --accent-soft: #F8D8C8;
+      --glow: rgba(224,120,86,0.18);
+    }
+    [data-weather="dusk"] {
+      --bg: #F2EEF7; --bg-elev: #FFFFFF; --bg-soft: #E2DBEE;
+      --ink: #1F1A2E; --ink-dim: #605779; --ink-faint: #A89FBC;
+      --hairline: rgba(31,26,46,0.08);
+      --accent: #5B4FA5; --accent-ink: #F6F2FF; --accent-soft: #D8D1F0;
+      --glow: rgba(91,79,165,0.18);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F1411; --bg-elev: #181E1A; --bg-soft: #222A24;
+        --ink: #E8EDE4; --ink-dim: #90A293; --ink-faint: #4A5A4F;
+        --hairline: rgba(232,237,228,0.08);
+        --accent: #88B496; --accent-ink: #0F1411; --accent-soft: #1F2C24;
+        --glow: rgba(136,180,150,0.28);
+      }
+      [data-weather="dawn"] {
+        --bg: #1A1310; --bg-elev: #241B16; --bg-soft: #2E231C;
+        --ink: #F2E4D7; --ink-dim: #A89685; --ink-faint: #5C4D43;
+        --hairline: rgba(242,228,215,0.08);
+        --accent: #F08F6A; --accent-ink: #1A1310; --accent-soft: #3A2418;
+        --glow: rgba(240,143,106,0.30);
+      }
+      [data-weather="dusk"] {
+        --bg: #11101A; --bg-elev: #1A1925; --bg-soft: #252336;
+        --ink: #ECE6F5; --ink-dim: #9A92AE; --ink-faint: #4F4860;
+        --hairline: rgba(236,230,245,0.08);
+        --accent: #A99CE8; --accent-ink: #11101A; --accent-soft: #262238;
+        --glow: rgba(169,156,232,0.32);
+      }
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    html, body {
+    html {
       margin: 0;
       padding: 0;
       background: var(--bg);
-      color: var(--fg);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
-      font-size: 17px;
+      color: var(--ink);
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 16px;
       line-height: 1.5;
       overscroll-behavior-y: none;
       -webkit-font-smoothing: antialiased;
+      transition: color 0.28s ease;
+    }
+
+    .bg-video, .bg-image, .bg-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .bg-video, .bg-image {
+      object-fit: cover;
+      z-index: -2;
+      background: var(--bg);
+      display: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .bg-video.active, .bg-image.active {
+      display: block;
+      opacity: 1;
+    }
+    .bg-overlay {
+      z-index: -1;
+      background: rgba(15, 20, 17, 0.55);
+      transition: background 0.28s ease;
+    }
+    @media (prefers-color-scheme: light) {
+      .bg-overlay { background: rgba(244, 240, 230, 0.55); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-video, .bg-image { display: none; }
+      .bg-overlay { display: none; }
+      html, body { background: var(--bg); }
     }
 
     body {
@@ -47,30 +134,57 @@
       flex-direction: column;
       max-width: 480px;
       margin: 0 auto;
-      padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 96px);
+      padding: env(safe-area-inset-top) 22px calc(env(safe-area-inset-bottom) + 96px);
     }
+
+    /* svg icon defs are display:none; only their <use> references render */
+    #icon-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 4px 18px;
+      padding: 18px 0 22px;
     }
-    header h1 {
+    .wordmark {
+      font-family: var(--font-display);
       font-size: 20px;
-      font-weight: 600;
-      margin: 0;
+      font-weight: 500;
+      font-style: italic;
       letter-spacing: -0.01em;
+      font-variation-settings: "opsz" 144;
+      color: var(--ink);
+      margin: 0;
     }
-    header .meta {
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .weather-badge {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      padding: 3px 9px;
+      border: 0.5px solid var(--hairline);
+      border-radius: 999px;
+      transition: color 0.28s ease, border-color 0.28s ease;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; color: var(--ink-dim); }
+    .streak-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: var(--fg-dim);
+      font-weight: 500;
+      color: var(--ink);
       font-variant-numeric: tabular-nums;
     }
+    .streak-pill svg { color: var(--accent); }
     .icon-btn {
       background: transparent;
       border: none;
-      color: var(--fg-dim);
+      color: var(--ink-dim);
       width: var(--tap);
       height: var(--tap);
       display: inline-flex;
@@ -78,49 +192,46 @@
       justify-content: center;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 20px;
+      padding: 0;
+      transition: background 0.15s, color 0.15s;
     }
-    .icon-btn:active { background: var(--bg-elev); }
+    .icon-btn:active { background: var(--bg-soft); color: var(--ink); }
 
     main { flex: 1; }
 
-    .section {
-      margin-bottom: 24px;
-    }
+    .section { margin-bottom: 24px; }
     .section-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--fg-dim);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-dim);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 10px;
-      padding-left: 4px;
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
     }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
-      min-height: var(--tap);
+      min-height: 44px;
       padding: 0 16px;
-      border-radius: 999px;
+      border-radius: var(--radius-chip);
       background: var(--bg-elev);
-      border: 1px solid var(--border);
-      color: var(--fg);
-      font-size: 15px;
+      border: 0.5px solid var(--hairline);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 14px;
       font-weight: 500;
+      letter-spacing: -0.005em;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
       display: inline-flex;
       align-items: center;
     }
-    .chip:active { background: var(--bg-elev-2); }
+    .chip:active { background: var(--bg-soft); }
     .chip.selected {
-      background: var(--accent-dim);
+      background: var(--accent);
       border-color: var(--accent);
-      color: var(--fg);
+      color: var(--accent-ink);
     }
 
     .energy-toggle {
@@ -131,59 +242,69 @@
     .energy-toggle .chip {
       justify-content: center;
       padding: 0 8px;
+      border-radius: var(--radius-button);
     }
 
     .free-text-toggle {
       background: transparent;
       border: none;
-      color: var(--fg-dim);
-      font-size: 14px;
-      padding: 8px 4px;
+      color: var(--ink-dim);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 0;
       cursor: pointer;
       text-decoration: underline;
-      text-decoration-color: var(--fg-faint);
+      text-decoration-color: var(--ink-faint);
       text-underline-offset: 4px;
     }
     .free-text-input {
       width: 100%;
       background: var(--bg-elev);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--fg);
+      border: 0.5px solid var(--hairline);
+      border-radius: var(--radius-card);
+      color: var(--ink);
       padding: 12px 14px;
       font-size: 16px;
-      font-family: inherit;
+      font-family: var(--font-body);
       resize: none;
       margin-top: 10px;
       min-height: 80px;
     }
-    .free-text-input:focus { outline: none; border-color: var(--accent-dim); }
+    .free-text-input:focus { outline: none; border-color: var(--accent); }
 
     .sticky-cta {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
-      background: linear-gradient(to top, var(--bg) 60%, transparent);
+      padding: 28px 22px calc(env(safe-area-inset-bottom) + 14px);
+      background: transparent;
       max-width: 480px;
       margin: 0 auto;
       z-index: 10;
+      pointer-events: none;
     }
+    .sticky-cta > * { pointer-events: auto; }
     .cta {
       width: 100%;
       min-height: 56px;
-      border-radius: var(--radius);
+      border-radius: var(--radius-button);
       background: var(--accent);
-      color: #0d1117;
+      color: var(--accent-ink);
       border: none;
+      font-family: var(--font-body);
       font-size: 17px;
       font-weight: 600;
+      letter-spacing: -0.005em;
       cursor: pointer;
-      transition: background 0.15s, transform 0.05s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18), 0 16px 36px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06) inset;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      transition: background 0.15s, transform 0.05s, box-shadow 0.28s ease;
     }
-    .cta:active { background: #6cb696; transform: scale(0.99); }
-    .cta:disabled { background: var(--bg-elev); color: var(--fg-faint); cursor: not-allowed; }
+    .cta:active { transform: scale(0.99); }
+    .cta:disabled { background: var(--bg-soft); color: var(--ink-faint); box-shadow: none; cursor: not-allowed; }
 
     /* Content card */
     .content-view {
@@ -192,6 +313,10 @@
       animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .content-view.active { display: flex; }
+    @media (prefers-reduced-motion: reduce) {
+      .content-view { animation: none; }
+      html, body { transition: none; }
+    }
 
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(16px); }
@@ -200,73 +325,104 @@
 
     .content-type-tag {
       display: inline-block;
-      font-size: 12px;
+      align-self: flex-start;
+      font-family: var(--font-body);
+      font-size: 10px;
       font-weight: 600;
       color: var(--accent);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 14px;
+      letter-spacing: 0.18em;
+      margin-bottom: 22px;
       padding: 4px 10px;
-      background: var(--accent-dim);
+      background: var(--accent-soft);
       border-radius: 999px;
-      align-self: flex-start;
     }
     .content-text {
-      font-size: 22px;
-      line-height: 1.45;
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      color: var(--fg);
-      margin: 0 0 18px;
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 360;
+      letter-spacing: -0.018em;
+      color: var(--ink);
+      text-wrap: pretty;
+      font-variation-settings: "opsz" 144;
+      margin: 0 0 14px;
+      padding: 24px 22px 22px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 0.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius-card);
+      backdrop-filter: blur(16px) saturate(120%);
+      -webkit-backdrop-filter: blur(16px) saturate(120%);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+    }
+    @media (prefers-color-scheme: dark) {
+      .content-text {
+        background: rgba(15, 20, 17, 0.55);
+        border-color: rgba(255, 255, 255, 0.08);
+      }
     }
     .content-attribution {
-      font-size: 14px;
-      color: var(--fg-dim);
-      font-style: italic;
-      margin-bottom: 32px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin: 0 4px 32px;
     }
 
     .feedback-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 8px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
     .feedback-btn {
       min-height: 56px;
-      border-radius: var(--radius);
+      border-radius: var(--radius-button);
       background: var(--bg-elev);
-      border: 1px solid var(--border);
-      color: var(--fg);
-      font-size: 14px;
-      font-weight: 500;
+      border: 0.5px solid var(--hairline);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
-      transition: background 0.15s, border-color 0.15s;
+      gap: 4px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .feedback-btn:active { background: var(--bg-elev-2); }
-    .feedback-btn .emoji { font-size: 18px; line-height: 1; }
-    .feedback-btn.recorded { border-color: var(--accent); background: var(--accent-dim); }
+    .feedback-btn svg { color: var(--ink-dim); transition: color 0.15s; }
+    .feedback-btn:active { background: var(--bg-soft); }
+    .feedback-btn.recorded {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .feedback-btn.recorded svg { color: var(--accent); }
 
     .secondary-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-direction: column;
     }
     .secondary-btn {
-      min-height: 48px;
-      border-radius: var(--radius);
+      min-height: 44px;
+      border-radius: var(--radius-button);
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--fg);
-      font-size: 15px;
+      border: 0.5px solid var(--hairline);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
     }
-    .secondary-btn:active { background: var(--bg-elev); }
+    .secondary-btn:active { background: var(--bg-soft); }
+    .secondary-btn.ghost { border: none; color: var(--ink-dim); }
 
     /* History view */
     .history-view {
@@ -277,92 +433,155 @@
     .history-item {
       padding: 14px;
       background: var(--bg-elev);
-      border-radius: var(--radius);
+      border-radius: var(--radius-card);
       margin-bottom: 10px;
-      border: 1px solid var(--border);
+      border: 0.5px solid var(--hairline);
     }
     .history-item .when {
-      font-size: 12px;
-      color: var(--fg-dim);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
       margin-bottom: 6px;
     }
     .history-item .state {
       font-size: 14px;
-      color: var(--fg);
+      color: var(--ink);
       margin-bottom: 4px;
+      line-height: 1.4;
     }
     .history-item .freetext {
-      font-size: 13px;
-      color: var(--fg-dim);
+      font-family: var(--font-display);
+      font-size: 14px;
+      color: var(--ink-dim);
       font-style: italic;
+      font-variation-settings: "opsz" 14;
       margin-top: 6px;
+      line-height: 1.4;
     }
     .empty {
-      color: var(--fg-dim);
+      color: var(--ink-dim);
       text-align: center;
       padding: 40px 20px;
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .tabs {
-      display: none; /* hidden initially; shows after first check-in */
+      display: none;
       grid-template-columns: 1fr 1fr;
       gap: 4px;
-      background: var(--bg-elev);
-      border-radius: var(--radius);
+      background: var(--bg-soft);
+      border-radius: var(--radius-button);
       padding: 4px;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
     .tab {
       padding: 10px;
-      border-radius: 10px;
+      border-radius: var(--radius-button);
       background: transparent;
       border: none;
-      color: var(--fg-dim);
-      font-size: 14px;
+      color: var(--ink-dim);
+      font-family: var(--font-body);
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
     }
-    .tab.active { background: var(--bg-elev-2); color: var(--fg); }
+    .tab.active { background: var(--bg-elev); color: var(--ink); }
 
     .toast {
       position: fixed;
       bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--bg-elev-2);
-      border: 1px solid var(--border);
-      color: var(--fg);
+      background: var(--ink);
+      color: var(--bg);
       padding: 10px 18px;
       border-radius: 999px;
-      font-size: 14px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s;
       z-index: 20;
     }
     .toast.show { opacity: 1; }
+
+    h1.section-heading {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+      color: var(--ink);
+      margin: 0 0 22px;
+      text-wrap: pretty;
+      font-variation-settings: "opsz" 144;
+    }
+
   </style>
 </head>
-<body>
+<body data-weather="grove">
+  <video class="bg-video active" id="bgVideo" autoplay loop muted playsinline preload="auto" aria-hidden="true">
+    <source src="art/art-05.mp4" type="video/mp4" />
+  </video>
+  <img class="bg-image" id="bgImage" alt="" aria-hidden="true" />
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <svg id="icon-defs" aria-hidden="true">
+    <defs>
+      <symbol id="i-flame" viewBox="0 0 22 22">
+        <path d="M11 2.5c0 3.5-4 4.8-4 8.7C7 14.5 8.8 17 11 17s4-2.5 4-5.8c0-2-1.4-3.2-2.6-4.4C11 5.5 11 4 11 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="none"/>
+        <path d="M11 9.5c0 1.5-1.5 2.2-1.5 4 0 1.4 0.7 2.5 1.5 2.5s1.5-1.1 1.5-2.5c0-1.8-1.5-2.5-1.5-4z" fill="currentColor" opacity=".55"/>
+      </symbol>
+      <symbol id="i-history" viewBox="0 0 22 22">
+        <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M11 7v4l3 1.5"/>
+        </g>
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 22 22">
+        <path d="M5 11.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="i-dot" viewBox="0 0 22 22">
+        <circle cx="11" cy="11" r="2" fill="currentColor"/>
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 22 22">
+        <path d="M6 6l10 10M16 6L6 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <header>
-    <h1>Steady</h1>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="meta" id="streak"></span>
-      <button class="icon-btn" id="historyToggle" aria-label="History">≡</button>
+    <div class="header-left">
+      <h1 class="wordmark">Steady</h1>
+      <span class="weather-badge" id="weatherBadge">grove</span>
+    </div>
+    <div class="header-right">
+      <span class="streak-pill" id="streak" hidden>
+        <svg width="14" height="14" aria-hidden="true"><use href="#i-flame"/></svg>
+        <span id="streakCount"></span>
+      </span>
+      <button class="icon-btn" id="historyToggle" aria-label="History">
+        <svg width="22" height="22" aria-hidden="true"><use href="#i-history"/></svg>
+      </button>
     </div>
   </header>
 
   <main>
     <div class="tabs" id="tabs">
       <button class="tab active" data-view="dashboard">Check in</button>
-      <button class="tab" data-view="history">History</button>
+      <button class="tab" data-view="history">Path</button>
     </div>
 
     <!-- Dashboard view -->
     <section id="dashboardView">
+      <h1 class="section-heading">How are you, really?</h1>
+
       <div class="section">
-        <div class="section-label">How are you?</div>
+        <div class="section-label">Mood</div>
         <div class="chips" id="moodChips"></div>
       </div>
 
@@ -376,7 +595,7 @@
       </div>
 
       <div class="section">
-        <div class="section-label">What would help?</div>
+        <div class="section-label">What would help</div>
         <div class="chips" id="needChips"></div>
       </div>
 
@@ -392,16 +611,25 @@
       <p class="content-text" id="contentText"></p>
       <div class="content-attribution" id="contentAttribution"></div>
 
-      <div class="section-label" style="margin-bottom:8px">Did this land?</div>
+      <div class="section-label">Did this land?</div>
       <div class="feedback-row">
-        <button class="feedback-btn" data-rating="helped"><span class="emoji">✓</span><span>Helped</span></button>
-        <button class="feedback-btn" data-rating="neutral"><span class="emoji">·</span><span>Neutral</span></button>
-        <button class="feedback-btn" data-rating="missed"><span class="emoji">✕</span><span>Missed</span></button>
+        <button class="feedback-btn" data-rating="helped">
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Helped</span>
+        </button>
+        <button class="feedback-btn" data-rating="neutral">
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-dot"/></svg>
+          <span>Neutral</span>
+        </button>
+        <button class="feedback-btn" data-rating="missed">
+          <svg width="18" height="18" aria-hidden="true"><use href="#i-x"/></svg>
+          <span>Missed</span>
+        </button>
       </div>
 
       <div class="secondary-actions">
         <button class="secondary-btn" id="anotherBtn">Show me another</button>
-        <button class="secondary-btn" id="doneBtn">Done</button>
+        <button class="secondary-btn ghost" id="doneBtn">Done</button>
       </div>
     </section>
 
@@ -428,6 +656,36 @@
       need: ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion"],
       // Items load asynchronously from content/seed.json on first run, then cached
     };
+
+    // Mood-dynamic theming — palette morphs based on the user's check-in.
+    // Mapping mirrors tokens.jsx#moodToWeather from the design handoff.
+    const WEATHER_MOODS = {
+      dawn:  { mood: ["anxious", "wired", "overwhelmed"], need: ["calming", "self-compassion"] },
+      grove: { mood: ["flat", "sad", "scattered"],        need: ["grounding", "focusing"] },
+      dusk:  { mood: ["frustrated"],                       need: ["perspective", "energizing"] },
+    };
+    function moodToWeather(moods, needs, hour) {
+      const score = { dawn: 0, grove: 0, dusk: 0 };
+      for (const k of Object.keys(WEATHER_MOODS)) {
+        const w = WEATHER_MOODS[k];
+        moods.forEach(m => { if (w.mood.includes(m)) score[k] += 2; });
+        needs.forEach(n => { if (w.need.includes(n)) score[k] += 1; });
+      }
+      if (hour != null) {
+        if (hour >= 5 && hour < 11) score.dawn += 0.5;
+        if (hour >= 11 && hour < 18) score.grove += 0.3;
+        if (hour >= 18 || hour < 5) score.dusk += 0.5;
+      }
+      let best = "grove", max = -Infinity;
+      for (const k of Object.keys(score)) if (score[k] > max) { max = score[k]; best = k; }
+      return best;
+    }
+    function applyWeather() {
+      const w = moodToWeather([...state.mood], [...state.need], new Date().getHours());
+      document.body.dataset.weather = w;
+      const badge = document.getElementById("weatherBadge");
+      if (badge) badge.textContent = w;
+    }
 
     const STORE_KEYS = {
       checkIns: "steady.checkIns",
@@ -459,23 +717,46 @@
     // ----------- Bootstrapping content -----------
     async function bootContent() {
       const cached = load(STORE_KEYS.content, null);
+      const fetchFresh = fetch("content/seed.json")
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
+
       if (cached && cached.items && cached.items.length) {
         state.content = cached.items;
+        // Background refresh if seed bumped its version
+        fetchFresh.then(data => {
+          if (data && data.version !== cached.version) {
+            save(STORE_KEYS.content, data);
+            state.content = data.items;
+          }
+        });
         return;
       }
-      try {
-        const res = await fetch("../content/seed.json");
-        if (!res.ok) throw new Error("seed fetch failed");
-        const data = await res.json();
+
+      const data = await fetchFresh;
+      if (data) {
         save(STORE_KEYS.content, data);
         state.content = data.items;
-      } catch (e) {
-        console.error("Could not load seed library:", e);
+      } else {
+        console.error("Could not load seed library");
         toast("Content library unavailable");
       }
     }
 
     // ----------- Recommender -----------
+    // Five Rings lens — mirrors backend/src/recommender.ts NEED_TO_RING.
+    // Each selected `need` chip injects its ring into the tag set so
+    // ring-aligned content gets a +1 overlap bonus in scoring.
+    const NEED_TO_RING = {
+      grounding: "earth",
+      calming: "water",
+      focusing: "fire",
+      energizing: "fire",
+      perspective: "wind",
+      "self-compassion": "void",
+    };
+    const RINGS = ["earth", "water", "fire", "wind", "void"];
+
     function inferContextTags() {
       const h = new Date().getHours();
       const tags = [];
@@ -485,7 +766,8 @@
     }
 
     function getCheckInTags() {
-      return [...state.mood, ...state.need, ...inferContextTags()];
+      const ringTags = [...state.need].map(n => NEED_TO_RING[n]).filter(Boolean);
+      return [...state.mood, ...state.need, ...ringTags, ...inferContextTags()];
     }
 
     function getPersonalScore(itemId) {
@@ -516,7 +798,7 @@
       if (!state.content.length) return [];
 
       const scored = state.content
-        .filter(item => !excludeIds.includes(item.id) && !item.archived)
+        .filter(item => item.type !== "artwork" && !excludeIds.includes(item.id) && !item.archived)
         .map(item => {
           const overlap = item.tags.filter(t => tags.includes(t)).length;
           const personal = getPersonalScore(item.id) * 0.5;
@@ -611,6 +893,7 @@
           if (state.mood.has(m)) state.mood.delete(m); else state.mood.add(m);
           btn.classList.toggle("selected");
           updateCtaState();
+          applyWeather();
         });
         wrap.appendChild(btn);
       });
@@ -635,6 +918,7 @@
         btn.addEventListener("click", () => {
           if (state.need.has(n)) state.need.delete(n); else state.need.add(n);
           btn.classList.toggle("selected");
+          applyWeather();
         });
         wrap.appendChild(btn);
       });
@@ -646,6 +930,7 @@
           document.querySelectorAll("#energyToggle .chip").forEach(b => b.classList.remove("selected"));
           btn.classList.add("selected");
           state.energy = btn.dataset.energy;
+          applyWeather();
         });
       });
     }
@@ -667,10 +952,49 @@
       document.getElementById("showMeBtn").disabled = false;
     }
 
+    function pickBackgroundArt(forItem) {
+      const arts = state.content.filter(i =>
+        i.type === "artwork" && i.media_type !== "video" && i.image_url
+      );
+      if (!arts.length) return null;
+      const refTags = [...(forItem.tags || []), ...inferContextTags()];
+      return arts
+        .map(a => ({
+          a,
+          score: a.tags.filter(t => refTags.includes(t)).length + Math.random() * 0.5,
+        }))
+        .sort((x, y) => y.score - x.score)[0].a;
+    }
+
+    function setBackground({ video = false, imageUrl = null } = {}) {
+      const vid = document.getElementById("bgVideo");
+      const img = document.getElementById("bgImage");
+      if (video) {
+        img.classList.remove("active");
+        vid.classList.add("active");
+        vid.play().catch(() => {});
+      } else if (imageUrl) {
+        vid.classList.remove("active");
+        img.src = imageUrl;
+        img.classList.add("active");
+      }
+    }
+
     function showContent(item) {
       state.currentContentItem = item;
-      document.getElementById("contentType").textContent = item.type;
-      document.getElementById("contentText").textContent = item.text;
+      const ring = (item.tags || []).find(t => RINGS.includes(t));
+      document.getElementById("contentType").textContent = ring
+        ? `${item.type} · ${ring}`
+        : item.type;
+
+      const txt = document.getElementById("contentText");
+      txt.style.display = "block";
+      const isQuoteish = item.type !== "exercise";
+      txt.textContent = isQuoteish ? `“${item.text}”` : item.text;
+
+      const art = pickBackgroundArt(item);
+      if (art) setBackground({ imageUrl: art.image_url });
+
       document.getElementById("contentAttribution").textContent = item.attribution
         ? `— ${item.attribution}` + (item.duration_sec ? ` · ${item.duration_sec}s` : "")
         : (item.duration_sec ? `${item.duration_sec}s` : "");
@@ -694,6 +1018,7 @@
       const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
       document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
       setActiveTab("dashboard");
+      setBackground({ video: true });
     }
 
     function showHistory() {
@@ -744,11 +1069,12 @@
 
     function updateStreak() {
       const checkIns = load(STORE_KEYS.checkIns, []);
-      const el = document.getElementById("streak");
-      if (!checkIns.length) { el.textContent = ""; return; }
-      // Count distinct dates
+      const wrap = document.getElementById("streak");
+      const count = document.getElementById("streakCount");
+      if (!checkIns.length) { wrap.hidden = true; return; }
       const dates = new Set(checkIns.map(c => new Date(c.created_at).toDateString()));
-      el.textContent = `${dates.size} day${dates.size === 1 ? "" : "s"}`;
+      count.textContent = dates.size;
+      wrap.hidden = false;
     }
 
     // ----------- Event wiring -----------
@@ -758,6 +1084,7 @@
       bindEnergyToggle();
       bindFreeText();
       updateStreak();
+      applyWeather();
 
       const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
       document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
@@ -810,6 +1137,7 @@
         document.getElementById("freeText").style.display = "none";
         document.getElementById("freeTextToggle").textContent = "+ Anything else?";
         document.querySelectorAll(".chip.selected").forEach(c => c.classList.remove("selected"));
+        applyWeather();
         showDashboard();
       });
 
