@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "tag_vocabulary": {
     "mood": ["anxious", "wired", "flat", "sad", "frustrated", "scattered", "overwhelmed"],
     "need": ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion"],
@@ -152,6 +152,71 @@
       "attribution": "Void — empty space",
       "duration_sec": 60,
       "tags": ["anxious", "overwhelmed", "late-night", "self-compassion", "void"]
+    },
+
+    {
+      "id": "j-01",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Discipline equals freedom.",
+      "attribution": "Jocko Willink",
+      "tags": ["flat", "scattered", "focusing", "energizing", "pre-task", "fire"]
+    },
+    {
+      "id": "j-02",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Don't expect to be motivated every day to get out there and make things happen. Don't count on motivation. Count on discipline.",
+      "attribution": "Jocko Willink",
+      "tags": ["flat", "scattered", "energizing", "pre-task", "focusing", "fire"]
+    },
+    {
+      "id": "j-03",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "There is no easy way. There is only hard work, late nights, early mornings, practice, repetition, sweat, frustration, and discipline.",
+      "attribution": "Jocko Willink",
+      "tags": ["overwhelmed", "frustrated", "perspective", "energizing", "fire"]
+    },
+    {
+      "id": "j-04",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Hesitation allows the moment to pass and the opportunity to be lost. So we must defeat it.",
+      "attribution": "Jocko Willink",
+      "tags": ["scattered", "anxious", "pre-task", "energizing", "focusing", "fire"]
+    },
+    {
+      "id": "j-05",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "“How do I wake up early?” Wake up early. “How do I get tougher?” Be tougher. “How do I work out every day?” Work out every day.",
+      "attribution": "Jocko Willink",
+      "tags": ["flat", "scattered", "morning", "energizing", "pre-task", "fire"]
+    },
+    {
+      "id": "j-06",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "There is no one else to blame. Acknowledge the mistakes, take ownership, and develop a plan to win.",
+      "attribution": "Jocko Willink, Extreme Ownership",
+      "tags": ["frustrated", "post-conflict", "perspective", "focusing", "wind"]
+    },
+    {
+      "id": "j-07",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "It's not what you preach, it's what you tolerate.",
+      "attribution": "Jocko Willink",
+      "tags": ["post-conflict", "frustrated", "perspective", "wind"]
+    },
+    {
+      "id": "j-08",
+      "type": "reframe",
+      "source_type": "curated",
+      "text": "When things go bad — don't get bummed, don't get startled, don't get frustrated. Just look at it and say one word: Good.",
+      "attribution": "Jocko Willink — Good",
+      "tags": ["frustrated", "overwhelmed", "post-conflict", "perspective", "energizing", "fire"]
     },
 
     {
