@@ -45,15 +45,17 @@ The phase 0 prototype works fully offline: the seed library is fetched once and 
 
 ```bash
 cd ~/motivational-app
-python3 -m http.server 8080
+python3 -m http.server 8765
 ```
 
-Then open `http://localhost:8080/frontend/index.html` in your browser.
+Then open `http://localhost:8765/frontend/index.html` in your browser.
+
+(Port 8080 is reserved for playmakers-data. 8765 is an arbitrary free port — change it in the command above and the URLs below if it ever clashes with something else.)
 
 To put it on your phone:
 1. Make sure your Mac and phone are on the same Wi-Fi.
 2. Run `ipconfig getifaddr en0` to find your Mac's IP.
-3. On your phone, open `http://<your-mac-ip>:8080/frontend/index.html` in Safari.
+3. On your phone, open `http://<your-mac-ip>:8765/frontend/index.html` in Safari.
 4. Tap the Share button → "Add to Home Screen". The PWA manifest will give it a real icon.
 
 ---
