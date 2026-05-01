@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0d1117" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>Steady</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elev: #161b22;
+      --bg-elev-2: #1f262d;
+      --fg: #e6edf3;
+      --fg-dim: #8b96a3;
+      --fg-faint: #4a5560;
+      --accent: #7ec3a7;
+      --accent-dim: #3d5e51;
+      --warm: #d9a86c;
+      --danger: #c97070;
+      --border: #2a313a;
+      --radius: 14px;
+      --tap: 48px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+      overscroll-behavior-y: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 96px);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 4px 18px;
+    }
+    header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    header .meta {
+      font-size: 13px;
+      color: var(--fg-dim);
+      font-variant-numeric: tabular-nums;
+    }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--fg-dim);
+      width: var(--tap);
+      height: var(--tap);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .icon-btn:active { background: var(--bg-elev); }
+
+    main { flex: 1; }
+
+    .section {
+      margin-bottom: 24px;
+    }
+    .section-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      min-height: var(--tap);
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      display: inline-flex;
+      align-items: center;
+    }
+    .chip:active { background: var(--bg-elev-2); }
+    .chip.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--fg);
+    }
+
+    .energy-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .energy-toggle .chip {
+      justify-content: center;
+      padding: 0 8px;
+    }
+
+    .free-text-toggle {
+      background: transparent;
+      border: none;
+      color: var(--fg-dim);
+      font-size: 14px;
+      padding: 8px 4px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: var(--fg-faint);
+      text-underline-offset: 4px;
+    }
+    .free-text-input {
+      width: 100%;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--fg);
+      padding: 12px 14px;
+      font-size: 16px;
+      font-family: inherit;
+      resize: none;
+      margin-top: 10px;
+      min-height: 80px;
+    }
+    .free-text-input:focus { outline: none; border-color: var(--accent-dim); }
+
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
+      max-width: 480px;
+      margin: 0 auto;
+      z-index: 10;
+    }
+    .cta {
+      width: 100%;
+      min-height: 56px;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.05s;
+    }
+    .cta:active { background: #6cb696; transform: scale(0.99); }
+    .cta:disabled { background: var(--bg-elev); color: var(--fg-faint); cursor: not-allowed; }
+
+    /* Content card */
+    .content-view {
+      display: none;
+      flex-direction: column;
+      animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .content-view.active { display: flex; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .content-type-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+      padding: 4px 10px;
+      background: var(--accent-dim);
+      border-radius: 999px;
+      align-self: flex-start;
+    }
+    .content-text {
+      font-size: 22px;
+      line-height: 1.45;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      margin: 0 0 18px;
+    }
+    .content-attribution {
+      font-size: 14px;
+      color: var(--fg-dim);
+      font-style: italic;
+      margin-bottom: 32px;
+    }
+
+    .feedback-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .feedback-btn {
+      min-height: 56px;
+      border-radius: var(--radius);
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .feedback-btn:active { background: var(--bg-elev-2); }
+    .feedback-btn .emoji { font-size: 18px; line-height: 1; }
+    .feedback-btn.recorded { border-color: var(--accent); background: var(--accent-dim); }
+
+    .secondary-actions {
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+    }
+    .secondary-btn {
+      min-height: 48px;
+      border-radius: var(--radius);
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .secondary-btn:active { background: var(--bg-elev); }
+
+    /* History view */
+    .history-view {
+      display: none;
+      flex-direction: column;
+    }
+    .history-view.active { display: flex; }
+    .history-item {
+      padding: 14px;
+      background: var(--bg-elev);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .history-item .when {
+      font-size: 12px;
+      color: var(--fg-dim);
+      margin-bottom: 6px;
+    }
+    .history-item .state {
+      font-size: 14px;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+    .history-item .freetext {
+      font-size: 13px;
+      color: var(--fg-dim);
+      font-style: italic;
+      margin-top: 6px;
+    }
+    .empty {
+      color: var(--fg-dim);
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 15px;
+    }
+
+    .tabs {
+      display: none; /* hidden initially; shows after first check-in */
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: var(--bg-elev);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 18px;
+    }
+    .tab {
+      padding: 10px;
+      border-radius: 10px;
+      background: transparent;
+      border: none;
+      color: var(--fg-dim);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .tab.active { background: var(--bg-elev-2); color: var(--fg); }
+
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elev-2);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 20;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Steady</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="meta" id="streak"></span>
+      <button class="icon-btn" id="historyToggle" aria-label="History">≡</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-view="dashboard">Check in</button>
+      <button class="tab" data-view="history">History</button>
+    </div>
+
+    <!-- Dashboard view -->
+    <section id="dashboardView">
+      <div class="section">
+        <div class="section-label">How are you?</div>
+        <div class="chips" id="moodChips"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Energy</div>
+        <div class="energy-toggle" id="energyToggle">
+          <button class="chip" data-energy="low">Low</button>
+          <button class="chip" data-energy="mid">Mid</button>
+          <button class="chip" data-energy="high">High</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">What would help?</div>
+        <div class="chips" id="needChips"></div>
+      </div>
+
+      <div class="section">
+        <button class="free-text-toggle" id="freeTextToggle">+ Anything else?</button>
+        <textarea class="free-text-input" id="freeText" placeholder="Type a note (optional)" style="display:none"></textarea>
+      </div>
+    </section>
+
+    <!-- Content view -->
+    <section class="content-view" id="contentView">
+      <span class="content-type-tag" id="contentType"></span>
+      <p class="content-text" id="contentText"></p>
+      <div class="content-attribution" id="contentAttribution"></div>
+
+      <div class="section-label" style="margin-bottom:8px">Did this land?</div>
+      <div class="feedback-row">
+        <button class="feedback-btn" data-rating="helped"><span class="emoji">✓</span><span>Helped</span></button>
+        <button class="feedback-btn" data-rating="neutral"><span class="emoji">·</span><span>Neutral</span></button>
+        <button class="feedback-btn" data-rating="missed"><span class="emoji">✕</span><span>Missed</span></button>
+      </div>
+
+      <div class="secondary-actions">
+        <button class="secondary-btn" id="anotherBtn">Show me another</button>
+        <button class="secondary-btn" id="doneBtn">Done</button>
+      </div>
+    </section>
+
+    <!-- History view -->
+    <section class="history-view" id="historyView">
+      <div id="historyList"></div>
+    </section>
+  </main>
+
+  <div class="sticky-cta" id="stickyCta">
+    <button class="cta" id="showMeBtn">Show me something</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============================================================
+    // Steady — phase 0 prototype
+    // Embedded seed library + localStorage persistence
+    // ============================================================
+
+    const SEED = {
+      mood: ["anxious", "wired", "flat", "sad", "frustrated", "scattered", "overwhelmed"],
+      need: ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion"],
+      // Items load asynchronously from content/seed.json on first run, then cached
+    };
+
+    const STORE_KEYS = {
+      checkIns: "steady.checkIns",
+      sessions: "steady.sessions",
+      feedback: "steady.feedback",
+      content: "steady.content",
+      lastShown: "steady.lastShown",
+    };
+
+    const state = {
+      mood: new Set(),
+      need: new Set(),
+      energy: null,
+      freeText: "",
+      currentSession: null,
+      currentContentItem: null,
+      content: [],
+    };
+
+    // ----------- Storage helpers -----------
+    const load = (k, fallback) => {
+      try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }
+      catch { return fallback; }
+    };
+    const save = (k, v) => { localStorage.setItem(k, JSON.stringify(v)); };
+    const uid = () => Math.random().toString(36).slice(2, 11);
+    const now = () => Date.now();
+
+    // ----------- Bootstrapping content -----------
+    async function bootContent() {
+      const cached = load(STORE_KEYS.content, null);
+      if (cached && cached.items && cached.items.length) {
+        state.content = cached.items;
+        return;
+      }
+      try {
+        const res = await fetch("../content/seed.json");
+        if (!res.ok) throw new Error("seed fetch failed");
+        const data = await res.json();
+        save(STORE_KEYS.content, data);
+        state.content = data.items;
+      } catch (e) {
+        console.error("Could not load seed library:", e);
+        toast("Content library unavailable");
+      }
+    }
+
+    // ----------- Recommender -----------
+    function inferContextTags() {
+      const h = new Date().getHours();
+      const tags = [];
+      if (h >= 5 && h < 11) tags.push("morning");
+      if (h >= 22 || h < 5) tags.push("late-night");
+      return tags;
+    }
+
+    function getCheckInTags() {
+      return [...state.mood, ...state.need, ...inferContextTags()];
+    }
+
+    function getPersonalScore(itemId) {
+      const fb = load(STORE_KEYS.feedback, []);
+      const ratings = fb.filter(f => f.content_id === itemId);
+      if (!ratings.length) return 0;
+      const score = ratings.reduce((s, r) => {
+        if (r.rating === "helped") return s + 1;
+        if (r.rating === "missed") return s - 1;
+        return s;
+      }, 0);
+      return score / ratings.length;
+    }
+
+    function getRecencyPenalty(itemId) {
+      const lastShown = load(STORE_KEYS.lastShown, {});
+      const last = lastShown[itemId];
+      if (!last) return 0;
+      const daysAgo = (now() - last) / (1000 * 60 * 60 * 24);
+      if (daysAgo < 1) return -2;
+      if (daysAgo < 3) return -1;
+      if (daysAgo < 7) return -0.4;
+      return 0;
+    }
+
+    function recommend(n = 1, excludeIds = []) {
+      const tags = getCheckInTags();
+      if (!state.content.length) return [];
+
+      const scored = state.content
+        .filter(item => !excludeIds.includes(item.id) && !item.archived)
+        .map(item => {
+          const overlap = item.tags.filter(t => tags.includes(t)).length;
+          const personal = getPersonalScore(item.id) * 0.5;
+          const recency = getRecencyPenalty(item.id);
+          const rand = Math.random() * 0.3;
+          return {
+            item,
+            score: overlap + personal + recency + rand,
+            overlap,
+          };
+        })
+        .filter(s => s.overlap > 0 || tags.length === 0)
+        .sort((a, b) => b.score - a.score);
+
+      return scored.slice(0, n).map(s => s.item);
+    }
+
+    // ----------- Session lifecycle -----------
+    function recordCheckIn() {
+      const checkIn = {
+        id: uid(),
+        created_at: now(),
+        state: {
+          mood: [...state.mood],
+          energy: state.energy,
+          need: [...state.need],
+          free_text: state.freeText.trim() || undefined,
+        },
+        context: {
+          time_of_day: new Date().getHours(),
+          inferred_tags: inferContextTags(),
+        },
+      };
+      const checkIns = load(STORE_KEYS.checkIns, []);
+      checkIns.push(checkIn);
+      save(STORE_KEYS.checkIns, checkIns);
+      return checkIn;
+    }
+
+    function startSession(checkIn, contentItems) {
+      const session = {
+        id: uid(),
+        check_in_id: checkIn.id,
+        content_ids: contentItems.map(c => c.id),
+        started_at: now(),
+        ended_at: null,
+      };
+      const sessions = load(STORE_KEYS.sessions, []);
+      sessions.push(session);
+      save(STORE_KEYS.sessions, sessions);
+
+      const lastShown = load(STORE_KEYS.lastShown, {});
+      contentItems.forEach(c => { lastShown[c.id] = now(); });
+      save(STORE_KEYS.lastShown, lastShown);
+
+      return session;
+    }
+
+    function endSession(session) {
+      const sessions = load(STORE_KEYS.sessions, []);
+      const idx = sessions.findIndex(s => s.id === session.id);
+      if (idx >= 0) {
+        sessions[idx].ended_at = now();
+        save(STORE_KEYS.sessions, sessions);
+      }
+    }
+
+    function recordFeedback(session, item, rating) {
+      const fb = load(STORE_KEYS.feedback, []);
+      const existing = fb.findIndex(f => f.session_id === session.id && f.content_id === item.id);
+      const entry = {
+        id: existing >= 0 ? fb[existing].id : uid(),
+        session_id: session.id,
+        content_id: item.id,
+        rating,
+        created_at: now(),
+      };
+      if (existing >= 0) fb[existing] = entry; else fb.push(entry);
+      save(STORE_KEYS.feedback, fb);
+    }
+
+    // ----------- Rendering -----------
+    function renderMoodChips() {
+      const wrap = document.getElementById("moodChips");
+      wrap.innerHTML = "";
+      SEED.mood.forEach(m => {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.textContent = m;
+        btn.dataset.tag = m;
+        btn.addEventListener("click", () => {
+          if (state.mood.has(m)) state.mood.delete(m); else state.mood.add(m);
+          btn.classList.toggle("selected");
+          updateCtaState();
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function renderNeedChips() {
+      const wrap = document.getElementById("needChips");
+      wrap.innerHTML = "";
+      const labels = {
+        "grounding": "ground me",
+        "calming": "calm me",
+        "focusing": "focus me",
+        "energizing": "lift me",
+        "perspective": "perspective",
+        "self-compassion": "self-compassion",
+      };
+      SEED.need.forEach(n => {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.textContent = labels[n] || n;
+        btn.dataset.tag = n;
+        btn.addEventListener("click", () => {
+          if (state.need.has(n)) state.need.delete(n); else state.need.add(n);
+          btn.classList.toggle("selected");
+        });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function bindEnergyToggle() {
+      document.querySelectorAll("#energyToggle .chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#energyToggle .chip").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          state.energy = btn.dataset.energy;
+        });
+      });
+    }
+
+    function bindFreeText() {
+      const toggle = document.getElementById("freeTextToggle");
+      const input = document.getElementById("freeText");
+      toggle.addEventListener("click", () => {
+        const visible = input.style.display !== "none";
+        input.style.display = visible ? "none" : "block";
+        toggle.textContent = visible ? "+ Anything else?" : "− Hide note";
+        if (!visible) input.focus();
+      });
+      input.addEventListener("input", () => { state.freeText = input.value; });
+    }
+
+    function updateCtaState() {
+      // Always allow showing something — even with no input we'll fall back to context-only
+      document.getElementById("showMeBtn").disabled = false;
+    }
+
+    function showContent(item) {
+      state.currentContentItem = item;
+      document.getElementById("contentType").textContent = item.type;
+      document.getElementById("contentText").textContent = item.text;
+      document.getElementById("contentAttribution").textContent = item.attribution
+        ? `— ${item.attribution}` + (item.duration_sec ? ` · ${item.duration_sec}s` : "")
+        : (item.duration_sec ? `${item.duration_sec}s` : "");
+
+      // Reset feedback button states
+      document.querySelectorAll(".feedback-btn").forEach(b => b.classList.remove("recorded"));
+
+      document.getElementById("dashboardView").style.display = "none";
+      document.getElementById("historyView").classList.remove("active");
+      document.getElementById("contentView").classList.add("active");
+      document.getElementById("stickyCta").style.display = "none";
+      document.getElementById("tabs").style.display = "none";
+      window.scrollTo(0, 0);
+    }
+
+    function showDashboard() {
+      document.getElementById("contentView").classList.remove("active");
+      document.getElementById("historyView").classList.remove("active");
+      document.getElementById("dashboardView").style.display = "block";
+      document.getElementById("stickyCta").style.display = "block";
+      const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
+      document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
+      setActiveTab("dashboard");
+    }
+
+    function showHistory() {
+      const checkIns = (load(STORE_KEYS.checkIns, []) || []).slice().reverse();
+      const list = document.getElementById("historyList");
+      if (!checkIns.length) {
+        list.innerHTML = '<div class="empty">No check-ins yet.</div>';
+      } else {
+        list.innerHTML = checkIns.slice(0, 50).map(ci => {
+          const d = new Date(ci.created_at);
+          const when = d.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+          const stateBits = [];
+          if (ci.state.mood && ci.state.mood.length) stateBits.push(ci.state.mood.join(", "));
+          if (ci.state.energy) stateBits.push(`${ci.state.energy} energy`);
+          if (ci.state.need && ci.state.need.length) stateBits.push(`needed: ${ci.state.need.join(", ")}`);
+          const free = ci.state.free_text ? `<div class="freetext">"${escapeHtml(ci.state.free_text)}"</div>` : "";
+          return `<div class="history-item">
+            <div class="when">${when}</div>
+            <div class="state">${stateBits.join(" · ") || "(no input)"}</div>
+            ${free}
+          </div>`;
+        }).join("");
+      }
+      document.getElementById("dashboardView").style.display = "none";
+      document.getElementById("contentView").classList.remove("active");
+      document.getElementById("historyView").classList.add("active");
+      document.getElementById("stickyCta").style.display = "none";
+      setActiveTab("history");
+    }
+
+    function setActiveTab(view) {
+      document.querySelectorAll(".tab").forEach(t => {
+        t.classList.toggle("active", t.dataset.view === view);
+      });
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 2000);
+    }
+
+    function updateStreak() {
+      const checkIns = load(STORE_KEYS.checkIns, []);
+      const el = document.getElementById("streak");
+      if (!checkIns.length) { el.textContent = ""; return; }
+      // Count distinct dates
+      const dates = new Set(checkIns.map(c => new Date(c.created_at).toDateString()));
+      el.textContent = `${dates.size} day${dates.size === 1 ? "" : "s"}`;
+    }
+
+    // ----------- Event wiring -----------
+    function init() {
+      renderMoodChips();
+      renderNeedChips();
+      bindEnergyToggle();
+      bindFreeText();
+      updateStreak();
+
+      const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
+      document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
+
+      document.getElementById("showMeBtn").addEventListener("click", () => {
+        const ci = recordCheckIn();
+        const items = recommend(1);
+        if (!items.length) { toast("No content matched — try different inputs"); return; }
+        const session = startSession(ci, items);
+        state.currentSession = session;
+        showContent(items[0]);
+        updateStreak();
+      });
+
+      document.querySelectorAll(".feedback-btn").forEach(b => {
+        b.addEventListener("click", () => {
+          if (!state.currentSession || !state.currentContentItem) return;
+          recordFeedback(state.currentSession, state.currentContentItem, b.dataset.rating);
+          document.querySelectorAll(".feedback-btn").forEach(x => x.classList.remove("recorded"));
+          b.classList.add("recorded");
+          toast("Saved");
+        });
+      });
+
+      document.getElementById("anotherBtn").addEventListener("click", () => {
+        if (!state.currentSession) return;
+        const exclude = state.currentSession.content_ids;
+        const items = recommend(1, exclude);
+        if (!items.length) { toast("Nothing else fits — try a fresh check-in"); return; }
+        state.currentSession.content_ids.push(items[0].id);
+        const sessions = load(STORE_KEYS.sessions, []);
+        const idx = sessions.findIndex(s => s.id === state.currentSession.id);
+        if (idx >= 0) { sessions[idx] = state.currentSession; save(STORE_KEYS.sessions, sessions); }
+        const lastShown = load(STORE_KEYS.lastShown, {});
+        lastShown[items[0].id] = now();
+        save(STORE_KEYS.lastShown, lastShown);
+        showContent(items[0]);
+      });
+
+      document.getElementById("doneBtn").addEventListener("click", () => {
+        if (state.currentSession) endSession(state.currentSession);
+        // Reset transient UI state
+        state.mood.clear();
+        state.need.clear();
+        state.energy = null;
+        state.freeText = "";
+        state.currentSession = null;
+        state.currentContentItem = null;
+        document.getElementById("freeText").value = "";
+        document.getElementById("freeText").style.display = "none";
+        document.getElementById("freeTextToggle").textContent = "+ Anything else?";
+        document.querySelectorAll(".chip.selected").forEach(c => c.classList.remove("selected"));
+        showDashboard();
+      });
+
+      document.getElementById("historyToggle").addEventListener("click", () => {
+        const isHistory = document.getElementById("historyView").classList.contains("active");
+        if (isHistory) showDashboard(); else showHistory();
+      });
+
+      document.querySelectorAll(".tab").forEach(t => {
+        t.addEventListener("click", () => {
+          if (t.dataset.view === "dashboard") showDashboard();
+          else showHistory();
+        });
+      });
+
+      // Register service worker for PWA
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      }
+    }
+
+    bootContent().then(init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+name = "steady-api"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# After running `wrangler d1 create steady`, paste the database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "steady"
+database_id = "REPLACE_ME_AFTER_d1_create"
+
+# A static API token gates the API. Set with:
+#   wrangler secret put API_TOKEN
+# Frontend sends it as `Authorization: Bearer <token>`.
+[vars]
+DEFAULT_USER_ID = "kenny"
+ALLOWED_ORIGIN = "*"
+
+# When you wire phase 2 (Claude-generated content), uncomment:
+# [vars.CLAUDE_MODEL]
+# value = "claude-sonnet-4-6"
