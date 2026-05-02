@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0F1411"/>
-  <circle cx="256" cy="256" r="160" fill="none" stroke="#88B496" stroke-width="14" opacity="0.35"/>
-  <circle cx="256" cy="256" r="100" fill="none" stroke="#88B496" stroke-width="14" opacity="0.6"/>
-  <circle cx="256" cy="256" r="40" fill="#88B496"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Steady">
+  <rect width="64" height="64" rx="12" fill="#0F1411"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#88B496" stroke-width="1.5" opacity="0.35"/>
+  <path d="M56 328H169Q168 313 168 299Q168 201 227.0 142.5Q286 84 405 84Q638 84 666 229Q670 248 670 276Q670 303 644.5 333.0Q619 363 519 389L380 426Q223 467 173.0 532.0Q123 597 123 677Q123 711 130 750Q164 923 300.5 1007.5Q437 1092 655.0 1092.0Q873 1092 1111 1028L1058 760H945Q948 779 948 796Q948 979 722 979Q495 979 469 844Q466 828 466 805Q466 740 589 707L727 670Q926 617 981.0 550.5Q1036 484 1036 398Q1036 363 1028 322Q993 142 848.0 56.5Q703 -29 432 -29Q235 -29 -1 31Z" fill="#88B496" transform="translate(32 33) scale(0.026761819803746655 -0.026761819803746655) translate(-555.0 -531.5)"/>
 </svg>
