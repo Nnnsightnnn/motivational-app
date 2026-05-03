@@ -51,6 +51,14 @@
       --accent: #5B4FA5; --accent-ink: #F6F2FF; --accent-soft: #D8D1F0;
       --glow: rgba(91,79,165,0.18);
     }
+    /* Hype — high-voltage. Hot amber/red on near-black, light mode and dark. */
+    [data-weather="hype"] {
+      --bg: #0A0806; --bg-elev: #14100C; --bg-soft: #1F1812;
+      --ink: #FFF4E8; --ink-dim: #E8B98A; --ink-faint: #8A6243;
+      --hairline: rgba(255,180,90,0.18);
+      --accent: #FF5722; --accent-ink: #0A0806; --accent-soft: #2A1208;
+      --glow: rgba(255,87,34,0.45);
+    }
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0F1411; --bg-elev: #181E1A; --bg-soft: #222A24;
@@ -72,6 +80,13 @@
         --hairline: rgba(236,230,245,0.08);
         --accent: #A99CE8; --accent-ink: #11101A; --accent-soft: #262238;
         --glow: rgba(169,156,232,0.32);
+      }
+      [data-weather="hype"] {
+        --bg: #0A0806; --bg-elev: #14100C; --bg-soft: #221813;
+        --ink: #FFF4E8; --ink-dim: #F0C99C; --ink-faint: #8A6243;
+        --hairline: rgba(255,180,90,0.22);
+        --accent: #FF6B2C; --accent-ink: #0A0806; --accent-soft: #2A1208;
+        --glow: rgba(255,107,44,0.55);
       }
     }
 
@@ -323,6 +338,46 @@
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hypeSlam {
+      0%   { opacity: 0; transform: translateY(28px) scale(0.92); }
+      55%  { opacity: 1; transform: translateY(-4px) scale(1.015); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes hypeFlash {
+      0%   { box-shadow: 0 0 0 0 var(--glow), 0 18px 48px rgba(0,0,0,0.4); }
+      60%  { box-shadow: 0 0 0 14px rgba(255,107,44,0), 0 18px 48px rgba(0,0,0,0.4); }
+      100% { box-shadow: 0 0 0 0 rgba(255,107,44,0), 0 18px 48px rgba(0,0,0,0.4); }
+    }
+
+    [data-weather="hype"] .content-view {
+      animation: hypeSlam 0.42s cubic-bezier(0.16, 1.1, 0.3, 1);
+    }
+    [data-weather="hype"] .content-text {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: 0.005em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: rgba(20, 14, 10, 0.78);
+      border-color: rgba(255, 180, 90, 0.22);
+      box-shadow: 0 18px 48px rgba(0,0,0,0.4), 0 0 60px var(--glow);
+      animation: hypeFlash 0.55s ease-out;
+    }
+    [data-weather="hype"] .content-type-tag {
+      background: var(--accent);
+      color: var(--accent-ink);
+      letter-spacing: 0.22em;
+    }
+    [data-weather="hype"] .cta {
+      background: var(--accent);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 18px 40px var(--glow), 0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      [data-weather="hype"] .content-view,
+      [data-weather="hype"] .content-text { animation: none; }
     }
 
     .content-type-tag {
@@ -830,7 +885,7 @@
 
     const SEED = {
       mood: ["anxious", "wired", "flat", "sad", "frustrated", "scattered", "overwhelmed"],
-      need: ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion"],
+      need: ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion", "hype"],
       // Items load asynchronously from content/seed.json on first run, then cached
     };
 
@@ -840,10 +895,13 @@
       dawn:  { mood: ["anxious", "wired", "overwhelmed"], need: ["calming", "self-compassion"] },
       grove: { mood: ["flat", "sad", "scattered"],        need: ["grounding", "focusing"] },
       dusk:  { mood: ["frustrated"],                       need: ["perspective", "energizing"] },
+      hype:  { mood: [],                                   need: ["hype"] },
     };
     function moodToWeather(moods, needs, hour) {
+      // Hype is intentional — if the user picked it, honor it regardless of mood/time.
+      if (needs.includes("hype")) return "hype";
       const score = { dawn: 0, grove: 0, dusk: 0 };
-      for (const k of Object.keys(WEATHER_MOODS)) {
+      for (const k of Object.keys(score)) {
         const w = WEATHER_MOODS[k];
         moods.forEach(m => { if (w.mood.includes(m)) score[k] += 2; });
         needs.forEach(n => { if (w.need.includes(n)) score[k] += 1; });
@@ -932,6 +990,7 @@
       energizing: "fire",
       perspective: "wind",
       "self-compassion": "void",
+      hype: "fire",
     };
     const RINGS = ["earth", "water", "fire", "wind", "void"];
 
@@ -1087,6 +1146,7 @@
         "energizing": "lift me",
         "perspective": "perspective",
         "self-compassion": "self-compassion",
+        "hype": "hype me up",
       };
       SEED.need.forEach(n => {
         const btn = document.createElement("button");
@@ -1167,8 +1227,10 @@
 
       const txt = document.getElementById("contentText");
       txt.style.display = "block";
+      const isHype = (item.tags || []).includes("hype");
       const isQuoteish = item.type !== "exercise";
-      txt.textContent = isQuoteish ? `“${item.text}”` : item.text;
+      // Hype is a battle cry, not a meditation — no quote marks.
+      txt.textContent = (isQuoteish && !isHype) ? `“${item.text}”` : item.text;
 
       const art = pickBackgroundArt(item);
       if (art) setBackground({ imageUrl: art.image_url });
@@ -1279,7 +1341,7 @@
       {
         target: "#needChips",
         title: "What would help?",
-        body: "Pick the kind of nudge you need. These map to the five rings — earth, water, fire, wind, void.",
+        body: "Pick the kind of nudge you need — ground me, focus me, or hype me up if you want a push instead of a calm read.",
       },
       {
         target: "#showMeBtn",

@@ -1,8 +1,8 @@
 {
-  "version": 4,
+  "version": 5,
   "tag_vocabulary": {
     "mood": ["anxious", "wired", "flat", "sad", "frustrated", "scattered", "overwhelmed"],
-    "need": ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion"],
+    "need": ["grounding", "calming", "focusing", "energizing", "perspective", "self-compassion", "hype"],
     "context": ["morning", "late-night", "pre-task", "post-conflict"],
     "ring": ["earth", "water", "fire", "wind", "void"]
   },
@@ -465,6 +465,188 @@
       "attribution": "Light exposure",
       "duration_sec": 120,
       "tags": ["flat", "scattered", "morning", "energizing", "fire"]
+    },
+    {
+      "id": "h-q-01",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Stay hard.",
+      "attribution": "David Goggins",
+      "tags": ["hype", "fire", "energizing", "flat", "pre-task"]
+    },
+    {
+      "id": "h-q-02",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "When you think you're done, you're only at 40% of what your body's capable of. That's just the way we're built.",
+      "attribution": "David Goggins",
+      "tags": ["hype", "fire", "energizing", "flat", "overwhelmed", "pre-task"]
+    },
+    {
+      "id": "h-q-03",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "It's so easy to be great today, because everyone else is weak. If you have any mental toughness, any fraction of self-discipline — the world is yours.",
+      "attribution": "David Goggins",
+      "tags": ["hype", "fire", "energizing", "pre-task", "morning"]
+    },
+    {
+      "id": "h-q-04",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Far better is it to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy much nor suffer much.",
+      "attribution": "Theodore Roosevelt",
+      "tags": ["hype", "fire", "energizing", "perspective", "pre-task"]
+    },
+    {
+      "id": "h-q-05",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "I hated every minute of training, but I said, 'Don't quit. Suffer now and live the rest of your life as a champion.'",
+      "attribution": "Muhammad Ali",
+      "tags": ["hype", "fire", "energizing", "flat", "pre-task"]
+    },
+    {
+      "id": "h-q-06",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "I have nothing in common with lazy people who blame others for their lack of success. Great things come from hard work and perseverance. No excuses.",
+      "attribution": "Kobe Bryant",
+      "tags": ["hype", "fire", "energizing", "frustrated", "pre-task"]
+    },
+    {
+      "id": "h-q-07",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Strength does not come from winning. Your struggles develop your strengths. When you decide not to surrender, that is strength.",
+      "attribution": "Arnold Schwarzenegger",
+      "tags": ["hype", "fire", "energizing", "perspective", "overwhelmed"]
+    },
+    {
+      "id": "h-q-08",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Discipline equals freedom.",
+      "attribution": "Jocko Willink",
+      "tags": ["hype", "fire", "energizing", "scattered", "pre-task"]
+    },
+    {
+      "id": "h-q-09",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Waste no more time arguing what a good man should be. Be one.",
+      "attribution": "Marcus Aurelius",
+      "tags": ["hype", "fire", "energizing", "perspective", "pre-task"]
+    },
+    {
+      "id": "h-q-10",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.",
+      "attribution": "James Cameron",
+      "tags": ["hype", "fire", "energizing", "perspective"]
+    },
+    {
+      "id": "h-q-11",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "Don't pray for an easy life. Pray for the strength to endure a difficult one.",
+      "attribution": "Bruce Lee",
+      "tags": ["hype", "fire", "energizing", "overwhelmed", "perspective"]
+    },
+    {
+      "id": "h-q-12",
+      "type": "quote",
+      "source_type": "curated",
+      "text": "The only place success comes before work is in the dictionary.",
+      "attribution": "Vince Lombardi",
+      "tags": ["hype", "fire", "energizing", "scattered", "pre-task"]
+    },
+    {
+      "id": "h-r-01",
+      "type": "reframe",
+      "source_type": "curated",
+      "text": "You don't need motivation. You need to start. Motivation shows up after the first move — never before it.",
+      "attribution": "Reframe · Action precedes feeling",
+      "tags": ["hype", "fire", "energizing", "flat", "scattered", "pre-task"]
+    },
+    {
+      "id": "h-r-02",
+      "type": "reframe",
+      "source_type": "curated",
+      "text": "The version of you that you want to be is built one rep at a time. This — right now — is a rep. Take it.",
+      "attribution": "Reframe · Identity is reps",
+      "tags": ["hype", "fire", "energizing", "flat", "pre-task"]
+    },
+    {
+      "id": "h-r-03",
+      "type": "reframe",
+      "source_type": "curated",
+      "text": "Discomfort is the price of admission. Stop trying to skip it. Pay it and walk in.",
+      "attribution": "Reframe · Cost of entry",
+      "tags": ["hype", "fire", "energizing", "anxious", "overwhelmed", "pre-task"]
+    },
+    {
+      "id": "h-r-04",
+      "type": "reframe",
+      "source_type": "curated",
+      "text": "Small. Now. Move. That's the whole strategy. Save the planning for later — earn it by starting.",
+      "attribution": "Reframe · Smallest possible move",
+      "tags": ["hype", "fire", "energizing", "scattered", "overwhelmed", "pre-task"]
+    },
+    {
+      "id": "h-a-01",
+      "type": "action",
+      "source_type": "curated",
+      "text": "Stand up. Right now. On your feet. Shoulders back, chin up, take one big breath. The body leads — the mind follows. Don't sit back down for 60 seconds.",
+      "attribution": "Posture reset",
+      "duration_sec": 60,
+      "tags": ["hype", "fire", "energizing", "flat", "scattered", "pre-task"]
+    },
+    {
+      "id": "h-a-02",
+      "type": "action",
+      "source_type": "curated",
+      "text": "20 pushups. Or 10. Or 1. Drop and do them right now. The number isn't the point — the choice is. Stop reading. Start.",
+      "attribution": "Make the choice",
+      "duration_sec": 60,
+      "tags": ["hype", "fire", "energizing", "flat", "wired", "pre-task"]
+    },
+    {
+      "id": "h-a-03",
+      "type": "action",
+      "source_type": "curated",
+      "text": "Cold water on your face. Sink, shower, whatever's closest. 30 seconds. Wake the system up. Walk back different.",
+      "attribution": "Cold reset",
+      "duration_sec": 60,
+      "tags": ["hype", "fire", "energizing", "flat", "scattered", "morning"]
+    },
+    {
+      "id": "h-a-04",
+      "type": "action",
+      "source_type": "curated",
+      "text": "Pick the one thing you've been avoiding. Set a 90-second timer. Do the first 90 seconds of it. That's the whole task. Just 90 seconds.",
+      "attribution": "90-second start",
+      "duration_sec": 90,
+      "tags": ["hype", "fire", "energizing", "scattered", "overwhelmed", "pre-task"]
+    },
+    {
+      "id": "h-a-05",
+      "type": "action",
+      "source_type": "curated",
+      "text": "One song. Loud. Headphones or speakers — doesn't matter. Pick the one that makes you feel like a problem. Move to it. No phone, no scrolling. Then start the thing.",
+      "attribution": "One song",
+      "duration_sec": 240,
+      "tags": ["hype", "fire", "energizing", "flat", "pre-task", "morning"]
+    },
+    {
+      "id": "h-b-01",
+      "type": "breath",
+      "source_type": "curated",
+      "text": "Power breath. Inhale sharp through the nose, exhale harder through the mouth. 30 fast rounds, then hold the exhale as long as you can. Repeat 3x. Stand up when you finish.",
+      "attribution": "Wim Hof-style activation",
+      "duration_sec": 240,
+      "tags": ["hype", "fire", "energizing", "flat", "morning", "pre-task"]
     },
     {
       "id": "art-01",
