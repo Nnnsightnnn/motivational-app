@@ -125,3 +125,15 @@ Add tags as the library grows — there's no schema lock-in.
 - **Phase 3** — Insights view, weekly review, learned ranker.
 
 See `motivation-app-backend-scope.md` (in the cowork outputs folder) for the full architectural rationale.
+
+
+---
+
+<p align="center">
+  <a href="https://github.com/nnnsightnnn">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".brand/built-by-dark.svg">
+      <img src=".brand/built-by.svg" alt="built by nnnsightnnn" height="26">
+    </picture>
+  </a>
+</p>

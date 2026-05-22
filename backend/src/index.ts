@@ -1,3 +1,4 @@
+// built by nnnsightnnn — signal from noise
 // Steady API — Cloudflare Worker entry point.
 // Routes are mounted via Hono. Auth is a single static bearer token.
 
