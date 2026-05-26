@@ -145,6 +145,36 @@
       html, body { background: var(--bg); }
     }
 
+    /* Ink-bleed: brief sumi-e wash painted across the screen when the
+       inferred weather changes. The new --accent tone soaks outward
+       from an off-center brush touch, then dissipates. */
+    .bg-ink-bleed {
+      position: fixed;
+      inset: 0;
+      z-index: 25;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 32% 68%,
+        var(--accent) 0%,
+        var(--accent) 18%,
+        transparent 62%);
+      transform: scale(0.25);
+      transform-origin: 32% 68%;
+      will-change: opacity, transform;
+    }
+    .bg-ink-bleed.bleed-active {
+      animation: inkBleed 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    @keyframes inkBleed {
+      0%   { opacity: 0;    transform: scale(0.22); }
+      28%  { opacity: 0.38; transform: scale(1.05); }
+      62%  { opacity: 0.22; transform: scale(1.7);  }
+      100% { opacity: 0;    transform: scale(2.4);  }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-ink-bleed { display: none; }
+    }
+
     body {
       min-height: 100vh;
       min-height: 100svh;
@@ -429,39 +459,59 @@
       margin: 0 4px 32px;
     }
 
+    /* Hanko (ink seal) feedback row — three pressed stamps for helped/neutral/missed. */
     .feedback-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 14px;
+      justify-items: center;
+      margin-bottom: 16px;
     }
     .feedback-btn {
-      min-height: 56px;
-      border-radius: var(--radius-button);
-      background: var(--bg-elev);
-      border: 0.5px solid var(--hairline);
-      color: var(--ink);
+      --seal-rot: -1.2deg;
+      width: 68px;
+      height: 68px;
+      border-radius: 5px;
+      background: transparent;
+      border: 1.5px solid var(--ink-faint);
+      color: var(--ink-dim);
       font-family: var(--font-body);
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      gap: 3px;
+      transform: rotate(var(--seal-rot));
+      transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
     }
-    .feedback-btn svg { color: var(--ink-dim); transition: color 0.15s; }
-    .feedback-btn:active { background: var(--bg-soft); }
+    .feedback-btn:nth-child(2) { --seal-rot: 0.6deg; }
+    .feedback-btn:nth-child(3) { --seal-rot: -0.4deg; }
+    .feedback-btn svg { color: var(--ink-faint); transition: color 0.18s ease; }
+    .feedback-btn:active { transform: scale(0.96) rotate(var(--seal-rot)); }
     .feedback-btn.recorded {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent);
+      background: #8C2A1F;
+      border-color: #8C2A1F;
+      color: #F8EBE3;
+      box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.06),
+        inset 0 0 8px rgba(0, 0, 0, 0.35);
+      animation: hankoPress 0.32s cubic-bezier(0.4, 1.4, 0.5, 1) forwards;
     }
-    .feedback-btn.recorded svg { color: var(--accent); }
+    .feedback-btn.recorded svg { color: #F8EBE3; }
+    @keyframes hankoPress {
+      0%   { transform: scale(1)    rotate(var(--seal-rot)); }
+      35%  { transform: scale(0.88) rotate(var(--seal-rot)); }
+      100% { transform: scale(1)    rotate(var(--seal-rot)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .feedback-btn,
+      .feedback-btn.recorded { animation: none; transition: none; }
+    }
 
     .secondary-actions {
       display: flex;
@@ -488,27 +538,59 @@
       flex-direction: column;
     }
     .history-view.active { display: flex; }
+    .history-view .section-heading { margin-bottom: 18px; }
     .history-item {
-      padding: 14px;
-      background: var(--bg-elev);
+      padding: 18px 20px 16px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 0.5px solid rgba(255, 255, 255, 0.5);
       border-radius: var(--radius-card);
-      margin-bottom: 10px;
-      border: 0.5px solid var(--hairline);
+      margin-bottom: 12px;
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+    }
+    @media (prefers-color-scheme: dark) {
+      .history-item {
+        background: rgba(15, 20, 17, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+      }
     }
     .history-item .when {
       font-family: var(--font-body);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 6px;
+      color: var(--accent);
+      margin-bottom: 10px;
     }
     .history-item .state {
-      font-size: 14px;
+      font-family: var(--font-display);
+      font-size: 18px;
+      line-height: 1.3;
+      font-weight: 380;
+      letter-spacing: -0.012em;
+      font-variation-settings: "opsz" 144;
       color: var(--ink);
-      margin-bottom: 4px;
-      line-height: 1.4;
+      text-wrap: pretty;
+      margin: 0;
+    }
+    .history-item .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .history-item .tag {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 3px 9px;
+      border-radius: 999px;
     }
     .history-item .freetext {
       font-family: var(--font-display);
@@ -516,14 +598,18 @@
       color: var(--ink-dim);
       font-style: italic;
       font-variation-settings: "opsz" 14;
-      margin-top: 6px;
-      line-height: 1.4;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 0.5px solid var(--hairline);
+      line-height: 1.45;
     }
     .empty {
       color: var(--ink-dim);
       text-align: center;
       padding: 40px 20px;
       font-size: 14px;
+      font-family: var(--font-display);
+      font-style: italic;
     }
 
     .tabs {
@@ -737,6 +823,7 @@
   </video>
   <img class="bg-image" id="bgImage" alt="" aria-hidden="true" />
   <div class="bg-overlay" aria-hidden="true"></div>
+  <div class="bg-ink-bleed" id="bgInkBleed" aria-hidden="true"></div>
 
   <svg id="icon-defs" aria-hidden="true">
     <defs>
@@ -763,6 +850,10 @@
         <path d="M6.4 8.1 Q5.7 3.7 11.1 3.9 Q16.4 3.6 16.1 8.6 Q15.9 11.2 11.5 12 Q10.6 12.3 11 14.6"
               fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="10.95" cy="17.5" r="1.05" fill="currentColor"/>
+      </symbol>
+      <symbol id="i-enso" viewBox="0 0 22 22">
+        <path d="M15.3 4.5 Q9.6 3.6 6.1 6.9 Q2.6 10.3 4.4 14.6 Q6.3 18.7 11.4 18.4 Q16.4 18.1 17.7 13.4 Q18.6 8.6 14.4 6.1"
+              fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
       </symbol>
     </defs>
   </svg>
@@ -848,6 +939,7 @@
 
     <!-- History view -->
     <section class="history-view" id="historyView">
+      <h1 class="section-heading">Your path</h1>
       <div id="historyList"></div>
     </section>
   </main>
@@ -858,7 +950,7 @@
 
   <button class="fab" id="guideFab" aria-label="Show guide">
     <span class="fab-glyph">
-      <svg width="22" height="22" aria-hidden="true"><use href="#i-help"/></svg>
+      <svg width="24" height="24" aria-hidden="true"><use href="#i-enso"/></svg>
     </span>
   </button>
 
@@ -918,9 +1010,20 @@
     }
     function applyWeather() {
       const w = moodToWeather([...state.mood], [...state.need], new Date().getHours());
-      document.body.dataset.weather = w;
+      const body = document.body;
+      const prev = body.dataset.weather;
+      body.dataset.weather = w;
       const badge = document.getElementById("weatherBadge");
       if (badge) badge.textContent = w;
+      // Ink-bleed only fires on a real weather change, never on first render.
+      if (prev && prev !== w) {
+        const bleed = document.getElementById("bgInkBleed");
+        if (bleed) {
+          bleed.classList.remove("bleed-active");
+          void bleed.offsetWidth; // restart animation cleanly
+          bleed.classList.add("bleed-active");
+        }
+      }
     }
 
     const STORE_KEYS = {
@@ -1257,8 +1360,7 @@
       document.getElementById("historyView").classList.remove("active");
       document.getElementById("dashboardView").style.display = "block";
       document.getElementById("stickyCta").style.display = "block";
-      const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
-      document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
+      document.getElementById("tabs").style.display = "grid";
       setActiveTab("dashboard");
       setFabVisible(true);
       setBackground({ video: true });
@@ -1273,14 +1375,19 @@
         list.innerHTML = checkIns.slice(0, 50).map(ci => {
           const d = new Date(ci.created_at);
           const when = d.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
-          const stateBits = [];
-          if (ci.state.mood && ci.state.mood.length) stateBits.push(ci.state.mood.join(", "));
-          if (ci.state.energy) stateBits.push(`${ci.state.energy} energy`);
-          if (ci.state.need && ci.state.need.length) stateBits.push(`needed: ${ci.state.need.join(", ")}`);
-          const free = ci.state.free_text ? `<div class="freetext">"${escapeHtml(ci.state.free_text)}"</div>` : "";
+          const moodLine = (ci.state.mood && ci.state.mood.length) ? ci.state.mood.join(" · ") : "";
+          const stateText = moodLine || "(no mood logged)";
+          const tagBits = [];
+          if (ci.state.energy) tagBits.push(`${ci.state.energy} energy`);
+          (ci.state.need || []).forEach(n => tagBits.push(n));
+          const tags = tagBits.length
+            ? `<div class="tags">${tagBits.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>`
+            : "";
+          const free = ci.state.free_text ? `<div class="freetext">“${escapeHtml(ci.state.free_text)}”</div>` : "";
           return `<div class="history-item">
             <div class="when">${when}</div>
-            <div class="state">${stateBits.join(" · ") || "(no input)"}</div>
+            <div class="state">${escapeHtml(stateText)}</div>
+            ${tags}
             ${free}
           </div>`;
         }).join("");
@@ -1489,8 +1596,7 @@
       updateStreak();
       applyWeather();
 
-      const hasHistory = (load(STORE_KEYS.checkIns, []) || []).length > 0;
-      document.getElementById("tabs").style.display = hasHistory ? "grid" : "none";
+      document.getElementById("tabs").style.display = "grid";
 
       document.getElementById("showMeBtn").addEventListener("click", () => {
         const ci = recordCheckIn();

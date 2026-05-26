@@ -58,3 +58,7 @@ frontend/video/
 .claude/settings.local.json
 # --- /ClaudeKit ---
 
+
+
+# Local Antigravity bridge — keep local
+AGENTS.md
