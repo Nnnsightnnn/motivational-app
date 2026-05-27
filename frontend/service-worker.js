@@ -2,7 +2,7 @@
 // Cache-first for the app shell so it works offline on the phone.
 // Bump CACHE_VERSION whenever you change the shell.
 
-const CACHE_VERSION = "steady-v14";
+const CACHE_VERSION = "steady-v15";
 const SHELL = [
   "./",
   "./index.html",
