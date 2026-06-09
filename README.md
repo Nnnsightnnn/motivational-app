@@ -130,7 +130,7 @@ See `motivation-app-backend-scope.md` (in the cowork outputs folder) for the ful
 ---
 
 <p align="center">
-  <a href="https://github.com/nnnsightnnn">
+  <a href="https://github.com/Nnnsightnnn">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset=".brand/built-by-dark.svg">
       <img src=".brand/built-by.svg" alt="built by nnnsightnnn" height="26">
